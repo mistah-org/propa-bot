@@ -15,6 +15,7 @@ let TAGS = process.env.TAGS
 let targetTags = TAGS.split(',').map(function(item) {
   return item.trim();
 })
+console.log('checking for tags: ', targetTags)
 
 // Steem Init
 const client = new dsteem.Client('https://api.steemit.com')
