@@ -60,7 +60,6 @@ steem.api.streamTransactions(async function (err, transaction) {
     let i;
     for (i = 0; i < targetTags.length; i++) {
       if (postTags.indexOf(targetTags[i]) >= 0) {
-        console.log('targetTags[i]', targetTags[i])
         containsSpTags = true
         break;
       }
@@ -75,6 +74,7 @@ steem.api.streamTransactions(async function (err, transaction) {
   if (SIMULATE_ONLY) {
     console.log('simulation only...')
     console.log('sending memo to post author: ', postAuthor)
+
   } else {
     console.log('sending memo...')
     // Send Comment
