@@ -17,6 +17,8 @@ exports.send_memo = async (
   lang,
 ) => {
   console.log('sending memo to: ', postAuthor);
+  console.log('lang: ', lang);
+  console.log('memo.templates[lang]: ', memo.templates[lang]);
 
   const transf = {
     from: bot,

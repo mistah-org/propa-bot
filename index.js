@@ -21,6 +21,9 @@ let targetTags = TAGS.split(',').map(function(item) {
 })
 console.log('checking for tags: ', targetTags)
 
+const memo = require("./memo")
+console.log('memo.templates[LANG]: ', memo.templates[LANG]);
+
 // Steem Init
 const client = new dsteem.Client('https://api.steemit.com')
 let key = dsteem.PrivateKey.from(POSTING_KEY)
