@@ -3,10 +3,11 @@
 Create a `.env` to store your posting key, username, and other configurations.
 
 ```
-ACCOUNT=STEEM_NAME
-POSTING_KEY=POSTING_KEY_HERE
+ACCOUNT=STEEM_ACCOUNT
+POSTING_KEY=posting_key_here
 SIMULATE_ONLY=true
 TAGS=testing
+TEMPLATE_LANGUAGE=en
 ```
 
 Starting the server for development `npm run dev`
