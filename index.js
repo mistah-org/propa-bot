@@ -7,14 +7,14 @@ const steemFx = require ("./steem")
 // Environment Init
 dotenv.config()
 if (!process.env.ACCOUNT || !process.env.POSTING_KEY
-  || !process.env.TAGS || !process.env.LANG) {
+  || !process.env.TAGS || !process.env.TEMPLATE_LANGUAGE) {
   throw new Error('ENV variable missing')
 }
 
 let POSTING_KEY = process.env.POSTING_KEY
 let ACCOUNT = process.env.ACCOUNT
 let SIMULATE_ONLY = (process.env.SIMULATE_ONLY === "true")
-let LANG = process.env.LANG
+let TEMPLATE_LANGUAGE = process.env.TEMPLATE_LANGUAGE.trim()
 let TAGS = process.env.TAGS
 let targetTags = TAGS.split(',').map(function(item) {
   return item.trim();
@@ -22,7 +22,7 @@ let targetTags = TAGS.split(',').map(function(item) {
 console.log('checking for tags: ', targetTags)
 
 const memo = require("./memo")
-console.log('memo.templates[LANG]: ', memo.templates[LANG]);
+console.log('memo.templates[TEMPLATE_LANGUAGE]: ', memo.templates[TEMPLATE_LANGUAGE]);
 
 // Steem Init
 const client = new dsteem.Client('https://api.steemit.com')
@@ -81,7 +81,7 @@ steem.api.streamTransactions(async function (err, transaction) {
   } else {
     console.log('sending memo...')
     // Send Comment
-    steemFx.send_memo(client, key, postAuthor, ACCOUNT, LANG)
+    steemFx.send_memo(client, key, postAuthor, ACCOUNT, TEMPLATE_LANGUAGE)
     .then(() => {
       console.error("Transfer done.")
     }).catch(() => {
