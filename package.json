@@ -1,0 +1,26 @@
+{
+  "name": "propa-bot",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=7.10.1",
+    "npm": ">=5.3.0"
+  },
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "npm run serve",
+    "serve": "node index.js",
+    "heroku-prebuild": "npm i -g pm2 && pm2 install pm2-logrotate",
+    "heroku-postbuild": "pm2 start index.js"
+  },
+  "dependencies": {
+    "dotenv": "6.1.0",
+    "dsteem": "0.8.7",
+    "event-stream": "3.3.4",
+    "steem": "0.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.1"
+  }
+}
