@@ -11,7 +11,6 @@ if (!process.env.ACCOUNT || !process.env.POSTING_KEY) throw new Error('ENV varia
 let POSTING_KEY = process.env.POSTING_KEY
 let ACCOUNT = process.env.ACCOUNT
 let SIMULATE_ONLY = (process.env.SIMULATE_ONLY === "true")
-let TEST_ONLY = (process.env.TEST_ONLY === "true")
 let TAGS = process.env.TAGS
 let targetTags = TAGS.split(',').map(function(item) {
   return item.trim();

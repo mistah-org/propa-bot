@@ -1,0 +1,1 @@
+worker: pm2 start index.js --update-env && pm2 logs all
