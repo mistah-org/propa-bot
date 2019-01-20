@@ -6,11 +6,15 @@ const steemFx = require ("./steem")
 
 // Environment Init
 dotenv.config()
-if (!process.env.ACCOUNT || !process.env.POSTING_KEY) throw new Error('ENV variable missing')
+if (!process.env.ACCOUNT || !process.env.POSTING_KEY
+  || !process.env.TAGS || !process.env.LANG) {
+  throw new Error('ENV variable missing')
+}
 
 let POSTING_KEY = process.env.POSTING_KEY
 let ACCOUNT = process.env.ACCOUNT
 let SIMULATE_ONLY = (process.env.SIMULATE_ONLY === "true")
+let LANG = process.env.LANG
 let TAGS = process.env.TAGS
 let targetTags = TAGS.split(',').map(function(item) {
   return item.trim();
@@ -62,20 +66,19 @@ steem.api.streamTransactions(async function (err, transaction) {
       }
     }
   }
-
-  console.log('contains any of specified tags: ', containsSpTags)
   if (!containsSpTags) return
 
+  console.log('Detected target post...')
   console.log('author: ', postAuthor)
   console.log('permlink: ', permlink)
 
   if (SIMULATE_ONLY) {
     console.log('simulation only...')
-    console.log('sending memos to post author: ', postAuthor)
+    console.log('sending memo to post author: ', postAuthor)
   } else {
     console.log('sending memo...')
     // Send Comment
-    steemFx.send_memo(client, key, postAuthor, ACCOUNT)
+    steemFx.send_memo(client, key, postAuthor, ACCOUNT, LANG)
     .then(() => {
       console.error("Transfer done.")
     }).catch(() => {
