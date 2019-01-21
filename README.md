@@ -4,11 +4,11 @@ Create a `.env` to store your posting key, username, and other configurations.
 
 ```
 ACCOUNT=STEEM_ACCOUNT
+MONGODB_URI=mongodb://<dbuser>:<dbpassword>@<host>:<port>/<db>
 POSTING_KEY=posting_key_here
 SIMULATE_ONLY=true
 TAGS=testing
 TEMPLATE_LANGUAGE=en
-MONGODB_URI=mongodb://<dbuser>:<dbpassword>@<host>:<port>/<db>
 ```
 
 Starting the server for development `npm run dev`
