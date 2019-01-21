@@ -64,36 +64,31 @@ mongoose.connection
       }
 
       // Check if contains spanish tags
-      let containsSpTags = false
+      let containsTargetTag = false
       if (postTags) {
         let i;
         for (i = 0; i < targetTags.length; i++) {
           if (postTags.indexOf(targetTags[i]) >= 0) {
-            containsSpTags = true
+            containsTargetTag = true
             break;
           }
         }
       }
-      if (!containsSpTags) return
+      if (!containsTargetTag) return
 
-      console.log('Detected target post...')
       console.log('author: ', postAuthor)
       console.log('permlink: ', permlink)
 
       let account = await AccountModel.find({
           account: postAuthor
         })
-      console.log('account', account)
-
-      if (JSON.stringify(account) !== "{}") return
+      if (account.length) return
 
       let msg = new AccountModel({
-        account: postAuthor,
-        sentDate: new Date(),
-        permlink: permlink
+        account: postAuthor
       })
       let result = await msg.save()
-      console.log('registered', result)
+      console.log('saved', result)
 
       if (SIMULATE_ONLY) {
         console.log('simulation only...')
