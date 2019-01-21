@@ -15,6 +15,8 @@
     "dotenv": "6.1.0",
     "dsteem": "0.8.7",
     "event-stream": "3.3.4",
+    "mongodb": "^3.1.8",
+    "mongoose": "^5.3.7",
     "steem": "0.7.3"
   },
   "devDependencies": {

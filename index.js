@@ -25,65 +25,95 @@ console.log('checking for tags: ', targetTags)
 const client = new dsteem.Client('https://api.steemit.com')
 let key = dsteem.PrivateKey.from(POSTING_KEY)
 
-steem.api.streamTransactions(async function (err, transaction) {
+const mongoose = require('mongoose')
+let AccountModel = require('./models/account')
 
-  if (!transaction || !transaction.operations) return
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
+mongoose.Promise = global.Promise
+mongoose.connection
+  .on('connected', () => {
+  
+    console.log('Mongoose connection open...');
+    steem.api.streamTransactions(async function (err, transaction) {
 
-  const operation = transaction.operations[0]
-  const isCommentTx = (operation[0] === 'comment')
+      if (!transaction || !transaction.operations) return
 
-  const txData = operation[1]
-  const isRootPost = (isCommentTx && txData.parent_author === '')
+      const operation = transaction.operations[0]
+      const isCommentTx = (operation[0] === 'comment')
 
-  // Limit to root posts only
-  if (!isRootPost) return
+      const txData = operation[1]
+      const isRootPost = (isCommentTx && txData.parent_author === '')
 
-  // get post data
-  let postAuthor = txData.author
-  let permlink = txData.permlink
-  let post = await steemFx.getPostData(postAuthor, permlink).catch(() =>
-    console.error("Couldn't fetch post data with SteemJS")
-  )
+      // Limit to root posts only
+      if (!isRootPost) return
 
-  // get tags
-  let postTags
-  try {
-    postTags = JSON.parse(post.json_metadata).tags
-  } catch (e) {
-    console.error('Invalid root tags')
-    return
-  }
+      // get post data
+      let postAuthor = txData.author
+      let permlink = txData.permlink
+      let post = await steemFx.getPostData(postAuthor, permlink).catch(() =>
+        console.error("Couldn't fetch post data with SteemJS")
+      )
 
-  // Check if contains spanish tags
-  let containsSpTags = false
-  if (postTags) {
-    let i;
-    for (i = 0; i < targetTags.length; i++) {
-      if (postTags.indexOf(targetTags[i]) >= 0) {
-        containsSpTags = true
-        break;
+      // get tags
+      let postTags
+      try {
+        postTags = JSON.parse(post.json_metadata).tags
+      } catch (e) {
+        console.error('Invalid root tags')
+        return
       }
-    }
-  }
-  if (!containsSpTags) return
 
-  console.log('Detected target post...')
-  console.log('author: ', postAuthor)
-  console.log('permlink: ', permlink)
+      // Check if contains spanish tags
+      let containsSpTags = false
+      if (postTags) {
+        let i;
+        for (i = 0; i < targetTags.length; i++) {
+          if (postTags.indexOf(targetTags[i]) >= 0) {
+            containsSpTags = true
+            break;
+          }
+        }
+      }
+      if (!containsSpTags) return
 
-  if (SIMULATE_ONLY) {
-    console.log('simulation only...')
-    console.log('sending memo to post author: ', postAuthor)
+      console.log('Detected target post...')
+      console.log('author: ', postAuthor)
+      console.log('permlink: ', permlink)
 
-  } else {
-    console.log('sending memo...')
-    // Send Comment
-    steemFx.send_memo(client, key, postAuthor, ACCOUNT, TEMPLATE_LANGUAGE)
-    .then(() => {
-      console.error("Transfer done.")
-    }).catch(() => {
-      console.error("Couldn't transfer")
-    })
-  }
+      let account = await AccountModel.find({
+          account: postAuthor
+        })
+      console.log('account', account)
 
-});
+      if (JSON.stringify(account) !== "{}") return
+
+      let msg = new AccountModel({
+        account: postAuthor,
+        sentDate: new Date(),
+        permlink: permlink
+      })
+      let result = await msg.save()
+      console.log('registered', result)
+
+      if (SIMULATE_ONLY) {
+        console.log('simulation only...')
+        console.log('sending memo to post author: ', postAuthor)
+
+      } else {
+        console.log('sending memo...')
+        // Send Comment
+        steemFx.send_memo(client, key, postAuthor, ACCOUNT, TEMPLATE_LANGUAGE)
+        .then(() => {
+          console.error("Transfer done.")
+        }).catch(() => {
+          console.error("Couldn't transfer")
+        })
+
+      }
+
+    });
+
+  })  // end: mongo.connection on:connected
+  .on('error', (err) => {
+    console.log(`Connection error: ${err.message}`);
+  })  // end: mongo.connection on:error
