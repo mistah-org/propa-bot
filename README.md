@@ -8,6 +8,7 @@ POSTING_KEY=posting_key_here
 SIMULATE_ONLY=true
 TAGS=testing
 TEMPLATE_LANGUAGE=en
+MONGODB_URI=mongodb://<dbuser>:<dbpassword>@<host>:<port>/<db>
 ```
 
 Starting the server for development `npm run dev`
