@@ -3,6 +3,7 @@ const es = require("event-stream")
 const steem = require("steem")
 const dsteem = require("dsteem")
 const steemFx = require ("./steem")
+const constants = require ("./constants")
 
 // Environment Init
 dotenv.config()
@@ -47,8 +48,13 @@ mongoose.connection
       // Limit to root posts only
       if (!isRootPost) return
 
-      // get post data
+      // is author in exclude list?
       let postAuthor = txData.author
+      let isExcludeAuthor = constants.exempt_list.indexOf(postAuthor) >= 0
+      let isSelf = (postAuthor === ACCOUNT)
+      if (isExcludeAuthor || isSelf) return
+
+      // get post data
       let permlink = txData.permlink
       let post = await steemFx.getPostData(postAuthor, permlink).catch(() =>
         console.error("Couldn't fetch post data with SteemJS")
