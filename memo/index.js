@@ -9,15 +9,7 @@ Puedes consultar mi cuenta personal @hiroyamagishi
 `
 
 exports.templates['en'] = `
-I want to help all people living in Africa for voting their comments. I have more than 23,000 Steem Power, it wasn't much, but maybe my votes have some meaning for someone.
-
-What you should do is...
-
-1. Watch the video theme of the day posted on www.steemit.com/@happywhale
-
-2. Make a comment as a reflection of what you understand
-
-3. If you can make a video comment on the subject it is better to receive larger votes. You can use @dtube or youtube or @dsound.
+I  am giving free money to all who will watch and comment on my video, daily.
 
 I invite you to also join our Discord chat.
 https://discord.gg/vzHFNd6
