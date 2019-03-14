@@ -1,8 +1,9 @@
 exports.exempt_list = []
 exports.exempt_list = [
     'aidarojaswriter',
+    'electrodo',
     'emiliomorles',
-    'saikolola',
     'rafaelelganador',
+    'saikolola',
     'zaxan'
 ]
