@@ -8,7 +8,8 @@ const constants = require ("./constants")
 // Environment Init
 dotenv.config()
 if (!process.env.ACCOUNT || !process.env.POSTING_KEY
-  || !process.env.TAGS || !process.env.TEMPLATE_LANGUAGE) {
+  || !process.env.TAGS || !process.env.TEMPLATE_LANGUAGE
+  || !process.env.VOTE_WEIGHT || !process.env.VOTE_DELAY) {
   throw new Error('ENV variable missing')
 }
 
@@ -113,12 +114,14 @@ mongoose.connection
           })
 
         // Post comment
-        steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
+        setTimeout(() => {
+          steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
           .then(() => {
             console.error("Comment done.")
           }).catch(() => {
             console.error("Couldn't submit comment")
           })
+        }, VOTE_DELAY);
 
         // Cast vote
         setTimeout(() => {
