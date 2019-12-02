@@ -83,3 +83,37 @@ exports.post_comment = async (
     )
   return
 }
+
+exports.cast_vote = async (
+  client,
+  key,
+  postAuthor,
+  permlink,
+  bot,
+  weight,
+  lang,
+) => {
+  console.log('voting post of: ', postAuthor);
+  console.log('memo template language: ', lang);
+
+  const payload = {
+    voter: bot,
+    author: postAuthor,
+    permlink: permlink,
+    weight: weight,
+  };
+
+  await client.broadcast
+    .vote(payload, key)
+    .then(
+      function(result) {
+        console.log('Included in block: ' + result.block_num)
+        console.log(`Voted on @${postAuthor}/${permlink}`)
+      },
+      function(error) {
+        console.error(error)
+        throw error
+      }
+    )
+  return
+}

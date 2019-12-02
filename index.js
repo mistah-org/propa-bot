@@ -16,6 +16,8 @@ let POSTING_KEY = process.env.POSTING_KEY
 let ACCOUNT = process.env.ACCOUNT
 let SIMULATE_ONLY = (process.env.SIMULATE_ONLY === "true")
 let TEMPLATE_LANGUAGE = process.env.TEMPLATE_LANGUAGE.trim()
+let VOTE_WEIGHT = parseInt(process.env.VOTE_WEIGHT, 10)
+let VOTE_DELAY = parseInt(process.env.VOTE_DELAY)
 let TAGS = process.env.TAGS
 let targetTags = TAGS.split(',').map(function(item) {
   return item.trim();
@@ -117,6 +119,16 @@ mongoose.connection
           }).catch(() => {
             console.error("Couldn't submit comment")
           })
+
+        // Cast vote
+        setTimeout(() => {
+          steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, VOTE_WEIGHT, TEMPLATE_LANGUAGE)
+          .then(() => {
+            console.error("Vote done.")
+          }).catch(() => {
+            console.error("Couldn't cast vote")
+          })
+        }, VOTE_DELAY);
       }
 
     });
