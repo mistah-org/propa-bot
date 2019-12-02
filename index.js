@@ -102,14 +102,21 @@ mongoose.connection
 
       } else {
         console.log('sending memo...')
-        // Send Comment
+        // Send memo
         steemFx.send_memo(client, key, postAuthor, ACCOUNT, TEMPLATE_LANGUAGE)
-        .then(() => {
-          console.error("Transfer done.")
-        }).catch(() => {
-          console.error("Couldn't transfer")
-        })
+          .then(() => {
+            console.error("Transfer done.")
+          }).catch(() => {
+            console.error("Couldn't transfer")
+          })
 
+        // Post comment
+        steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
+          .then(() => {
+            console.error("Comment done.")
+          }).catch(() => {
+            console.error("Couldn't submit comment")
+          })
       }
 
     });
