@@ -17,6 +17,7 @@ let POSTING_KEY = process.env.POSTING_KEY
 let ACCOUNT = process.env.ACCOUNT
 let SIMULATE_ONLY = (process.env.SIMULATE_ONLY === "true")
 let TEMPLATE_LANGUAGE = process.env.TEMPLATE_LANGUAGE.trim()
+let AUTO_VOTE = (process.env.AUTO_VOTE === "true")
 let VOTE_WEIGHT = parseInt(process.env.VOTE_WEIGHT, 10)
 let VOTE_DELAY = parseInt(process.env.VOTE_DELAY)
 let TAGS = process.env.TAGS
@@ -47,18 +48,30 @@ mongoose.connection
 
       const txData = operation[1]
       const isRootPost = (isCommentTx && txData.parent_author === '')
+      let postAuthor = txData.author;
+      let isSelf = (postAuthor === ACCOUNT)
+      let permlink = txData.permlink
+
+      if (isSelf) {
+        // Cast vote
+        setTimeout(() => {
+          steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, 100)
+          .then(() => {
+            console.error("Vote done.")
+          }).catch(() => {
+            console.error("Couldn't cast vote")
+          })
+        }, VOTE_DELAY); 
+      }
 
       // Limit to root posts only
       if (!isRootPost) return
 
       // is author in exclude list?
-      let postAuthor = txData.author
       let isExcludeAuthor = constants.exempt_list.indexOf(postAuthor) >= 0
-      let isSelf = (postAuthor === ACCOUNT)
       if (isExcludeAuthor || isSelf) return
 
       // get post data
-      let permlink = txData.permlink
       let post = await steemFx.getPostData(postAuthor, permlink).catch(() =>
         console.error("Couldn't fetch post data with SteemJS")
       )
@@ -113,25 +126,27 @@ mongoose.connection
             console.error("Couldn't transfer")
           })
 
-        // Post comment
-        setTimeout(() => {
-          steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
-          .then(() => {
-            console.error("Comment done.")
-          }).catch(() => {
-            console.error("Couldn't submit comment")
-          })
-        }, VOTE_DELAY);
+        if (AUTO_VOTE) {
+          // Post comment
+          setTimeout(() => {
+            steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
+            .then(() => {
+              console.error("Comment done.")
+            }).catch(() => {
+              console.error("Couldn't submit comment")
+            })
+          }, VOTE_DELAY);
 
-        // Cast vote
-        setTimeout(() => {
-          steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, VOTE_WEIGHT, TEMPLATE_LANGUAGE)
-          .then(() => {
-            console.error("Vote done.")
-          }).catch(() => {
-            console.error("Couldn't cast vote")
-          })
-        }, VOTE_DELAY);
+          // Cast vote
+          setTimeout(() => {
+            steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, VOTE_WEIGHT)
+            .then(() => {
+              console.error("Vote done.")
+            }).catch(() => {
+              console.error("Couldn't cast vote")
+            })
+          }, VOTE_DELAY); 
+        }
       }
 
     });

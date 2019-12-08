@@ -91,10 +91,8 @@ exports.cast_vote = async (
   permlink,
   bot,
   weight,
-  lang,
 ) => {
   console.log('voting post of: ', postAuthor);
-  console.log('memo template language: ', lang);
 
   const payload = {
     voter: bot,
