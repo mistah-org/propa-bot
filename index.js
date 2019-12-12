@@ -18,6 +18,7 @@ let ACCOUNT = process.env.ACCOUNT
 let SIMULATE_ONLY = (process.env.SIMULATE_ONLY === "true")
 let TEMPLATE_LANGUAGE = process.env.TEMPLATE_LANGUAGE.trim()
 let AUTO_VOTE = (process.env.AUTO_VOTE === "true")
+let SELF_VOTE = (process.env.SELF_VOTE === "true")
 let VOTE_WEIGHT = parseInt(process.env.VOTE_WEIGHT, 10)
 let VOTE_DELAY = parseInt(process.env.VOTE_DELAY)
 let TAGS = process.env.TAGS
@@ -52,7 +53,7 @@ mongoose.connection
       let isSelf = (postAuthor === ACCOUNT)
       let permlink = txData.permlink
 
-      if (isSelf) {
+      if (SELF_VOTE && isSelf) {
         // Cast vote
         setTimeout(() => {
           steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, 100)
