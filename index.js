@@ -128,7 +128,7 @@ mongoose.connection
             console.error("Couldn't transfer")
           })
 
-        if (AUTO_VOTE) {
+        if (AUTO_VOTE && !isSelf) {
           // Post comment
           setTimeout(() => {
             steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
