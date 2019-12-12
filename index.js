@@ -20,6 +20,7 @@ let TEMPLATE_LANGUAGE = process.env.TEMPLATE_LANGUAGE.trim()
 let AUTO_VOTE = (process.env.AUTO_VOTE === "true")
 let SELF_VOTE = (process.env.SELF_VOTE === "true")
 let VOTE_WEIGHT = parseInt(process.env.VOTE_WEIGHT, 10)
+let SELF_VOTE_WEIGHT = parseInt(process.env.SELF_VOTE_WEIGHT, 10)
 let VOTE_DELAY = parseInt(process.env.VOTE_DELAY)
 let TAGS = process.env.TAGS
 let targetTags = TAGS.split(',').map(function(item) {
@@ -56,7 +57,7 @@ mongoose.connection
       if (SELF_VOTE && isSelf) {
         // Cast vote
         setTimeout(() => {
-          steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, 100)
+          steemFx.cast_vote(client, key, postAuthor, permlink, ACCOUNT, SELF_VOTE_WEIGHT)
           .then(() => {
             console.error("Vote done.")
           }).catch(() => {
