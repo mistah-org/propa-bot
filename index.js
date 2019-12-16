@@ -131,7 +131,7 @@ mongoose.connection
         if (AUTO_VOTE && !isSelf) {
           // Post comment
           setTimeout(() => {
-            steemFx.post_comment(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
+            steemFx.post_comment_with_options(client, key, postAuthor, permlink, ACCOUNT, TEMPLATE_LANGUAGE)
             .then(() => {
               console.error("Comment done.")
             }).catch(() => {

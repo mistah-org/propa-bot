@@ -84,6 +84,54 @@ exports.post_comment = async (
   return
 }
 
+exports.post_comment_with_options = async (
+  client,
+  key,
+  postAuthor,
+  parent_permlink,
+  bot,
+  lang,
+) => {
+  //generate random permanent link for post
+  const permlink = Math.random()
+      .toString(36)
+      .substring(2);
+
+  const payload = {
+    author: bot,
+    title: '',
+    body: comment.templates[lang],
+    parent_author: postAuthor,
+    parent_permlink: parent_permlink,
+    permlink: permlink,
+    json_metadata: '',
+  };
+
+  const options = {
+    allow_curation_rewards: true,
+    allow_votes: true,
+    author: bot,
+    extensions: [],
+    max_accepted_payout: '0.000 SBD',
+    percent_steem_dollars: 100,
+    permlink: permlink,
+  }
+
+  await client.broadcast
+    .commentWithOptions(payload, options, key)
+    .then(
+      function(result) {
+        console.log('Included in block: ' + result.block_num)
+        console.log(`Commented on @${postAuthor}/${permlink}`)
+      },
+      function(error) {
+        console.error(error)
+        throw error
+      }
+    )
+  return
+}
+
 exports.cast_vote = async (
   client,
   key,
